@@ -1,0 +1,20 @@
+{
+  "name": "easy calculator v3",
+  "description": "calculate simply and fast",
+  "version": "3.0",
+  "icons": {
+    "500": "./assets/img/calc.png"
+  },
+  "background": {
+    "scripts": [
+      "./assets/js/background.js"
+    ],
+    "persistent": false
+  },
+  "browser_action": {
+    "default_title": "click to open calculator",
+    "default_icon": "./assets/img/calc.png",
+    "default_popup": "index.html"
+  },
+  "manifest_version": 2
+}

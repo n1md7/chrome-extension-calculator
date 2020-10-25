@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Calculator</title>
+    <meta charset="utf-8">
+</head>
+<link rel="stylesheet" href="./assets/css/style.css">
+<script defer type="text/javascript" src="assets/js/constants.js"></script>
+<script defer type="text/javascript" src="assets/js/helpers.js"></script>
+<script defer type="text/javascript" src="assets/js/calculator.js"></script>
+<script defer type="text/javascript" src="assets/js/index.js"></script>
+<script defer type="text/javascript" src="assets/js/popup.js"></script>
+<body>
+<img id="popup-icon" title="Open popup window" src="pop-up.png">
+<div id="container">
+    <div class="calculator-screen">
+        <div placeholder="0" data-width="118" data-font-size="34" id="output"></div>
+    </div>
+    <div class="calculator-buttons">
+        <div class="row">
+            <button class="btn btn-clear">C</button>
+            <button data-value="3" class="btn btn-3">3</button>
+            <button data-value="2" class="btn btn-2">2</button>
+            <button data-value="1" class="btn btn-1">1</button>
+        </div>
+        <div class="row">
+            <button class="btn btn-delete">&rarr;</button>
+            <button data-value="6" class="btn btn-6">6</button>
+            <button data-value="5" class="btn btn-5">5</button>
+            <button data-value="4" class="btn btn-4">4</button>
+        </div>
+        <div class="row">
+            <button data-value="*" class="btn btn-multiplication">&times;</button>
+            <button data-value="9" class="btn btn-9">9</button>
+            <button data-value="8" class="btn btn-8">8</button>
+            <button data-value="7" class="btn btn-7">7</button>
+        </div>
+        <div class="row">
+            <button data-value="+" class="btn btn-addition">&plus;</button>
+            <button data-value="-" class="btn btn-subtraction">-</button>
+            <button data-value="/" class="btn btn-division">&div;</button>
+            <button data-value="0" class="btn btn-0">0</button>
+        </div>
+        <div class="row">
+            <button data-value="=" class="btn btn-equals">=</button>
+            <button data-value="." class="btn btn-dot">.</button>
+            <button data-value="!" class="btn btn-sqrt">&radic;</button>
+            <button data-value="^" class="btn btn-pow">x<sup>2</sup></button>
+        </div>
+    </div>
+    <div class="footer">
+        <span><b>nimda</b></span>
+    </div>
+</div>
+</body>
+</html>
