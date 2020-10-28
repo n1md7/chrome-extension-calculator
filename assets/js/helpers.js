@@ -58,57 +58,16 @@ Element.prototype.adjustFontSizeByIncreasing = function () {
 
 };
 
-Element.prototype.disable = function () {
-    this.setAttribute('disabled', '');
+Element.prototype.deactivate = function () {
+    this.classList.remove('active');
 };
-Element.prototype.enable = function () {
-    this.removeAttribute('disabled');
+Element.prototype.activate = function () {
+    this.classList.add('active');
 };
 
-function disable(element) {
-    element.disable();
+function deactivate(element) {
+    element.deactivate();
 }
-
-function enable(element) {
-    element.enable();
-}
-
-Array.prototype.alterLast = function (value = 0) {
-    if (this.length) {
-        this[this.length - 1] += `${value}`;
-    } else {
-        this[0] = value;
-    }
-
-    return this;
-};
-
-Array.prototype.alterLastRemoveLetter = function () {
-    if (this.length) {
-        if (this[this.length - 1].length === 1) {
-            this.pop();
-            return this;
-        }
-        this[this.length - 1] = this[this.length - 1].substr(0, this[this.length - 1].length - 1);
-    } else {
-        this[0] = this[0].substr(0, this[0].length - 1);
-    }
-
-    return this;
-};
-
-Array.prototype.operationIsSet = function () {
-    return this.some(stack => OPERATION_VALUES.includes(stack));
-};
-
-Array.prototype.lastIsOperation = function () {
-    let last = null;
-    if (this.length) {
-        last = this[this.length - 1];
-    }
-    if (!last) return false;
-    return OPERATION_VALUES.includes(last);
-};
 
 function round(num, decimal = 5) {
     return +(Math.round(num + `e+${decimal}`) + `e-${decimal}`);

@@ -75,7 +75,17 @@ body {
     height: auto;
 }
 
-#container .footer{
+#container .footer {
     text-align: center;
     font-size: 6px;
+}
+
+.btn.active {
+    box-shadow: inset 0px 0px 11px 0px #410e00f2;
+}
+
+.footer a{
+    cursor: pointer;
+    color: black;
+    text-decoration: none;
 }

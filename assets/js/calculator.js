@@ -1,42 +1,58 @@
 class Calculator {
     constructor(btn) {
         this.btn = btn;
-        this.calcStack = [];
         this.calculatedValue = 0;
+        this.operation = '';
+        this.numberOne = '';
+        this.numberTwo = '';
     }
 
     calculate() {
-        const [number1, operation, number2] = this.calcStack;
-        if (this.calcStack.length === 1) {
-            if (isNaN(parseFloat(number1))) {
-                throw new Error('Number expected');
-            }
-            this.calculatedValue = parseFloat(number1);
-            this.calcStack = [`${this.calculatedValue}`];
-
+        if (!this.numberOne) {
             return;
         }
-        if (isNaN(parseFloat(number2))) {
+        if (!this.numberTwo) {
+            return this.calculatedValue = +this.numberOne;
+        }
+
+        if (isNaN(parseFloat(this.numberOne)) || isNaN(parseFloat(this.numberTwo))) {
             throw new Error('Number expected');
         }
-        switch (operation) {
+
+        switch (this.operation) {
             case OPERATION_VALUES_OBJ.ADDITION:
-                this.calculatedValue = round(parseFloat(number1) + parseFloat(number2));
-                this.calcStack = [`${this.calculatedValue}`];
+                this.calculatedValue = round(parseFloat(this.numberOne) + parseFloat(this.numberTwo));
+                this.numberOne = `${this.calculatedValue}`;
                 break;
             case OPERATION_VALUES_OBJ.DIVISION:
-                this.calculatedValue = round(parseFloat(number1) / parseFloat(number2));
-                this.calcStack = [`${this.calculatedValue}`];
+                this.calculatedValue = round(parseFloat(this.numberOne) / parseFloat(this.numberTwo));
+                this.numberOne = `${this.calculatedValue}`;
                 break;
             case OPERATION_VALUES_OBJ.MULTIPLICATION:
-                this.calculatedValue = round(parseFloat(number1) * parseFloat(number2));
-                this.calcStack = [`${this.calculatedValue}`];
+                this.calculatedValue = round(parseFloat(this.numberOne) * parseFloat(this.numberTwo));
+                this.numberOne = `${this.calculatedValue}`;
                 break;
             case OPERATION_VALUES_OBJ.SUBTRACTION:
-                this.calculatedValue = round(parseFloat(number1) - parseFloat(number2));
-                this.calcStack = [`${this.calculatedValue}`];
+                this.calculatedValue = round(parseFloat(this.numberOne) - parseFloat(this.numberTwo));
+                this.numberOne = `${this.calculatedValue}`;
                 break;
         }
+        // reset
+        this.numberTwo = '';
+        this.operation = '';
+    }
+
+    formula(value) {
+        if (isNaN(value)) {
+            return this.render.output('Syntax error');
+        }
+        this.operation = '';
+        this.numberTwo = '';
+        this.calculatedValue = round(value);
+        this.numberOne = `${this.calculatedValue}`;
+        this.btn.output.innerText = this.calculatedValue;
+        this.btn.output.adjustFontSizeByDecreasing();
+        this.btn.output.adjustFontSizeByIncreasing();
     }
 
     get render() {
@@ -52,127 +68,82 @@ class Calculator {
         return {
             sqrt: () => {
                 // calculate values and render UI
-                if (this.calcStack.length > 1) {
-                    this.handler.calculate();
-                    const value = Math.sqrt(this.calculatedValue);
-                    if (isNaN(value)) {
-                        this.handler.disableAll();
-                        return this.render.output('Syntax error');
-                    }
-                    this.calculatedValue = round(value);
-                } else {
-                    const value = this.calcStack[0];
-                    if (isNaN(parseFloat(value))) {
-                        this.handler.disableAll();
-                        return this.render.output('Syntax error');
-                    }
-                    this.calculatedValue = round(Math.sqrt(value));
-                }
-                this.calcStack = [this.calculatedValue];
-                this.btn.output.innerText = this.calculatedValue;
-                this.btn.output.adjustFontSizeByDecreasing();
-                this.btn.output.adjustFontSizeByIncreasing();
+                this.handler.calculate();
+                const value = Math.sqrt(this.calculatedValue);
+                this.formula(value);
             },
             pow: () => {
                 // calculate values and render UI
-                if (this.calcStack.length > 1) {
-                    this.handler.calculate();
-                    this.calculatedValue = round(Math.pow(this.calculatedValue, 2));
-                } else {
-                    const value = this.calcStack[0];
-                    if (isNaN(parseFloat(value))) {
-                        this.handler.disableAll();
-                        return this.render.output('Syntax error');
-                    }
-                    this.calculatedValue = round(Math.pow(value, 2));
-                }
-                this.calcStack = [this.calculatedValue];
-                this.btn.output.innerText = this.calculatedValue;
-                this.btn.output.adjustFontSizeByDecreasing();
-                this.btn.output.adjustFontSizeByIncreasing();
+                this.handler.calculate();
+                const value = Math.pow(this.calculatedValue, 2);
+                this.formula(value);
             },
-            dot: ({target}) => {
-                this.btn.dot.disable();
-                // render UI
-                this.btn.output.innerText += target.dataset.value;
-                this.calcStack.alterLast(target.dataset.value);
-                this.btn.output.adjustFontSizeByDecreasing();
-            },
+            dot: (event) => this.handler.numbers(event),
             clear: () => {
-                this.handler.enableAll();
-                this.calcStack = [];
                 this.calculatedValue = 0;
+                this.operation = '';
+                this.numberOne = '';
+                this.numberTwo = '';
                 this.btn.output.innerText = '';
+                this.btn.operations.forEach(deactivate);
                 this.btn.output.adjustFontSizeByIncreasing();
             },
             backspace: () => {
-                this.handler.enableAll();
-                this.btn.output.innerText = this.calcStack.alterLastRemoveLetter();
+                if (this.operation) {
+                    this.numberTwo = this.numberTwo.slice(0, -1);
+                    this.btn.output.innerText = this.numberTwo;
+                } else {
+                    this.numberOne = this.numberOne.slice(0, -1);
+                    this.btn.output.innerText = this.numberOne;
+                }
                 this.btn.output.adjustFontSizeByIncreasing();
             },
             calculate: () => {
-                console.log(this.calcStack)
                 try {
                     // calculate values and render UI
                     this.calculate();
                     this.render.output();
-                } catch (error) {
-                    console.warn(error);
-                    this.handler.disableAll();
-                    this.render.output(error.message);
+                } catch ({message}) {
+                    this.render.output(message);
+                } finally {
+                    this.operation = '';
+                    this.btn.operations.forEach(deactivate);
+                    // adjust font-size
+                    this.btn.output.adjustFontSizeByIncreasing();
                 }
-                // adjust font-size
-                this.btn.output.adjustFontSizeByIncreasing();
             },
             numbers: ({target}) => {
-                // enable operational buttons
-                this.btn.operations.forEach(enable);
-                // when the last element is operation symbol
-                if (this.calcStack.lastIsOperation()) {
-                    // push as new element into stack
-                    this.calcStack.push(target.dataset.value);
+                this.btn.operations.forEach(deactivate);
+                // when operation is set
+                if (this.operation) {
+                    const value = this.numberTwo + target.dataset.value;
+                    if (isNaN(+value)) return;
+
+                    this.numberTwo = value;
+                    this.btn.output.innerText = value;
                 } else {
-                    // or it's a number and modify last element by concatenating the value
-                    this.calcStack.alterLast(target.dataset.value);
+                    const value = this.numberOne + target.dataset.value;
+                    if (isNaN(+value)) return;
+
+                    this.numberOne = value;
+                    this.btn.output.innerText = value;
                 }
                 // render UI
-                this.btn.output.innerText += target.dataset.value;
                 this.btn.output.adjustFontSizeByDecreasing();
             },
             operations: ({target}) => {
-                // disable operational buttons
-                this.btn.operations.forEach(disable);
-                // enable dot btn
-                this.btn.dot.enable();
                 // when operational symbol is set and clicking seconds time
-                if (this.calcStack.operationIsSet()) {
+                if (this.numberTwo) {
                     // trigger calculate
                     this.handler.calculate();
                 }
-                // or add to the stack prev number value
-                this.calcStack.push(target.dataset.value);
-                this.btn.output.innerText += target.dataset.value;
+                // set operation
+                this.operation = target.dataset.value;
+                this.btn.operations.forEach(deactivate);
+                target.activate();
                 // try to adjust by decreasing first and then vice versa
                 this.btn.output.adjustFontSizeByDecreasing();
                 this.btn.output.adjustFontSizeByIncreasing();
-            },
-            disableAll: () => {
-                this.btn.operations.forEach(disable);
-                this.btn.numbers.forEach(disable);
-                this.btn.dot.disable();
-                this.btn.sqrt.disable();
-                this.btn.pow.disable();
-                this.btn.equals.disable();
-                this.btn.delete.disable();
-            },
-            enableAll: () => {
-                this.btn.operations.forEach(enable);
-                this.btn.numbers.forEach(enable);
-                this.btn.dot.enable();
-                this.btn.sqrt.enable();
-                this.btn.pow.enable();
-                this.btn.equals.enable();
-                this.btn.delete.enable();
             }
         }
     }
